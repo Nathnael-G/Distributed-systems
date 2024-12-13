@@ -1,0 +1,267 @@
+package main
+
+import "fmt"
+
+func main() {
+    // Declaring variables with explicit types
+    var x int = 5
+    var y float32 = 3.14
+    var z string = "Hello, World!"
+    var isAdmin bool = false
+
+    // Short variable declaration (type inferred)
+    name := "John Doe"
+    age := 30
+
+    // Using variables
+    fmt.Println("x:", x)
+    fmt.Println("y:", y)
+    fmt.Println("z:", z)
+    fmt.Println("isAdmin:", isAdmin)
+    fmt.Println("name:", name)
+    fmt.Println("age:", age)
+
+    // Assigning new values to variables
+    x = 10
+    y = 2.71
+    z = "Goodbye, World!"
+    isAdmin = true
+    name = "Jane Doe"
+    age = 25
+
+    fmt.Println("Updated values:")
+    fmt.Println("x:", x)
+    fmt.Println("y:", y)
+    fmt.Println("z:", z)
+    fmt.Println("isAdmin:", isAdmin)
+    fmt.Println("name:", name)
+    fmt.Println("age:", age)
+}
+
+/////////////////////////////////////////////////////////
+
+package main
+
+import "fmt"
+
+// Function to calculate the area of a rectangle
+func calculateArea(length int, width int) int {
+    return length * width
+}
+
+// Function to calculate the perimeter of a rectangle
+func calculatePerimeter(length int, width int) int {
+    return 2 * (length + width)
+}
+
+func main() {
+    // Calling the calculateArea function
+    area := calculateArea(5, 3)
+    fmt.Println("Area:", area)
+
+    // Calling the calculatePerimeter function
+    perimeter := calculatePerimeter(5, 3)
+    fmt.Println("Perimeter:", perimeter)
+
+    // If statement example: checking if the area is greater than 10
+    if area > 10 {
+        fmt.Println("The area is greater than 10")
+    } else {
+        fmt.Println("The area is 10 or less")
+    }
+
+    // Switch statement example: checking the value of a variable
+    var shape string = "rectangle"
+    switch shape {
+    case "rectangle":
+        fmt.Println("The shape is a rectangle")
+    case "circle":
+        fmt.Println("The shape is a circle")
+    default:
+        fmt.Println("Unknown shape")
+    }
+
+    // Loop example: using a for loop to iterate over an array
+    fruits := [5]string{"apple", "banana", "cherry", "date", "elderberry"}
+    for i := 0; i < len(fruits); i++ {
+        fmt.Println("Fruit:", fruits[i])
+    }
+}
+
+////////////////////////////////////////////////////
+
+package main
+
+import "fmt"
+
+func main() {
+    // Array
+    colors := [5]string{"Red", "Green", "Blue", "Yellow", "Purple"}
+    fmt.Println("Array:", colors)
+
+    // Slice (dynamic array)
+    numbers := []int{1, 2, 3, 4, 5}
+    numbers = append(numbers, 6, 7, 8) // Add multiple elements to slice
+    fmt.Println("Slice:", numbers)
+
+    // Map (key-value pairs)
+    studentGrades := make(map[string]float32)
+    studentGrades["John"] = 85.5
+    studentGrades["Emily"] = 92.1
+    studentGrades["Michael"] = 78.9
+    fmt.Println("Map:", studentGrades)
+    fmt.Println("John's grade:", studentGrades["John"])
+
+    // Looping over an array
+    for i := 0; i < len(colors); i++ {
+        fmt.Printf("Index: %d, Color: %s\n", i, colors[i])
+    }
+
+    // Looping over a slice
+    for i, v := range numbers {
+        fmt.Printf("Index: %d, Value: %d\n", i, v)
+    }
+
+    // Looping over a map
+    for key, value := range studentGrades {
+        fmt.Printf("%s's grade: %.2f\n", key, value)
+    }
+
+    // Slicing a slice
+    evenNumbers := numbers[1:6] // Get a subset of the slice
+    fmt.Println("Even numbers:", evenNumbers)
+
+    // Deleting an element from a map
+    delete(studentGrades, "Michael")
+    fmt.Println("Updated map:", studentGrades)
+}
+
+///////////////////////////////////////////////////////////
+
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func printEvenNumbers() {
+    for i := 2; i <= 10; i += 2 {
+        fmt.Println(i)
+        time.Sleep(500 * time.Millisecond)
+    }
+}
+
+func printOddNumbers() {
+    for i := 1; i <= 9; i += 2 {
+        fmt.Println(i)
+        time.Sleep(500 * time.Millisecond)
+    }
+}
+
+func main() {
+    // Run printEvenNumbers as a goroutine (concurrently)
+    go printEvenNumbers()
+
+    // Run printOddNumbers as a goroutine (concurrently)
+    go printOddNumbers()
+
+    // Allow time for the goroutines to finish
+    time.Sleep(6 * time.Second)
+    fmt.Println("Main function finished")
+}
+
+////////////////////////////////////////////////////////
+
+package main
+
+import "fmt"
+
+// Function that sends strings to the channel
+func sendStrings(ch chan string) {
+    for _, str := range []string{"Hello", "World", "Go", "Programming", "Channels"} {
+        ch <- str // Send data to channel
+    }
+    close(ch) // Close the channel when done
+}
+
+func main() {
+    // Create a channel
+    ch := make(chan string)
+
+    // Start a goroutine that sends data
+    go sendStrings(ch)
+
+    // Receive data from the channel
+    for val := range ch {
+        fmt.Println("Received:", val)
+    }
+
+    fmt.Println("Channel closed, program finished.")
+}
+
+///////////////////////////////////////////////////////////////
+
+package main
+
+import "fmt"
+
+func producer(ch chan int) {
+    for i := 0; i < 5; i++ {
+        ch <- i // Send data to channel
+    }
+    close(ch) // Close the channel when done
+}
+
+func consumer(ch chan int) {
+    for val := range ch {
+        fmt.Println("Received:", val)
+    }
+    fmt.Println("Channel closed, consumer finished.")
+}
+
+func main() {
+    ch := make(chan int)
+
+    go producer(ch) // Start producer goroutine
+    go consumer(ch) // Start consumer goroutine
+
+    fmt.Println("Main function finished.")
+}
+
+
+////////////////////////////////////////////////////////////////
+
+package main
+
+import (
+    "fmt"
+    "os"
+)
+
+// Function that writes data to a file (simplified for this example)
+func writeFile(filename string, data string) error {
+    file, err := os.Create(filename)
+    if err != nil {
+        return err // Return the error if file creation fails
+    }
+    defer file.Close() // Ensure the file is closed after function returns
+
+    _, err = file.WriteString(data)
+    if err != nil {
+        return err // Return the error if writing fails
+    }
+
+    fmt.Println("File written successfully:", filename)
+    return nil
+}
+
+func main() {
+    data := "Hello, World!"
+    err := writeFile("example.txt", data)
+    if err != nil {
+        fmt.Println("Error:", err)
+    } else {
+        fmt.Println("File written successfully.")
+    }
+}
