@@ -16,15 +16,18 @@ type Replica struct {
 	peers []string // List of peer addresses
 }
 
+// Update modifies the replica's data
 func (r *Replica) Update(key, value string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.data[key] = value
 }
 
-func (r *Replica) propagateUpdates(key, value string) {
+// propagateUpdates sends updates to all peers with a simulated delay
+func (r *Replica) propagateUpdates(key, value string, delay time.Duration) {
 	for _, peer := range r.peers {
 		go func(peer string) {
+			time.Sleep(delay) // Simulate network delay
 			conn, err := net.Dial("tcp", peer)
 			if err != nil {
 				fmt.Println("Error connecting to peer:", peer, err)
@@ -36,9 +39,11 @@ func (r *Replica) propagateUpdates(key, value string) {
 	}
 }
 
+// handleConnection processes incoming messages from peers
 func handleConnection(conn net.Conn, replica *Replica) {
 	defer conn.Close()
 	reader := bufio.NewReader(conn)
+
 	for {
 		message, err := reader.ReadString('\n')
 		if err != nil {
@@ -57,12 +62,14 @@ func main() {
 		return
 	}
 
-	// Parse command-line arguments
 	machineAddr := os.Args[1]
 	peers := os.Args[2:]
 
 	// Initialize the replica
-	replica := &Replica{data: make(map[string]string), peers: peers}
+	replica := &Replica{
+		data:  make(map[string]string),
+		peers: peers,
+	}
 
 	// Start the server
 	listener, err := net.Listen("tcp", machineAddr)
@@ -70,6 +77,7 @@ func main() {
 		panic(err)
 	}
 	defer listener.Close()
+
 	fmt.Printf("Replica listening on %s\n", machineAddr)
 
 	go func() {
@@ -82,11 +90,23 @@ func main() {
 		}
 	}()
 
+	// Measure convergence time
+	startTime := time.Now() // Start timing
+
 	// Simulate an update
 	replica.Update("key1", "value1")
-	replica.propagateUpdates("key1", "value1")
-	time.Sleep(5 * time.Second) // Wait for updates to propagate
 
+	// Simulate propagation with a 2-second delay (adjust as needed)
+	replica.propagateUpdates("key1", "value1", 2*time.Second)
+
+	// Wait for a sufficient amount of time for updates to propagate
+	time.Sleep(10 * time.Second) // Adjust based on expected propagation time
+
+	// Log convergence time
+	duration := time.Since(startTime)
+	fmt.Printf("Convergence Time: %v\n", duration)
+
+	// Display the current state of the replica's data
 	replica.mu.Lock()
 	fmt.Println("Replica Data:", replica.data)
 	replica.mu.Unlock()
