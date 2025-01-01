@@ -1,16 +1,12 @@
 package main
 
 import (
-	"Lab_7/paxos"
 	"fmt"
+	"paxos-lab2/paxos"
 )
 
 func main() {
-	acceptors := []*paxos.Acceptor{
-		&paxos.Acceptor{},
-		&paxos.Acceptor{},
-		&paxos.Acceptor{},
-	}
+	acceptors := []*paxos.Acceptor{}
 
 	proposer := paxos.Proposer{ProposalNumber: 1, Value: "Distributed Systems"}
 	value := proposer.Propose("Distributed Systems", acceptors)

@@ -1,12 +1,14 @@
 package main
 
 import (
-	"Lab_7/paxos"
 	"fmt"
+	"paxos-lab/paxos"
 )
 
 func main() {
 	acceptors := []*paxos.Acceptor{
+		&paxos.Acceptor{},
+		&paxos.Acceptor{},
 		&paxos.Acceptor{},
 		&paxos.Acceptor{},
 		&paxos.Acceptor{},
